@@ -93,6 +93,24 @@ struct CalendarHeader: View {
                 }
             }
         }
+        .contentShape(Rectangle())
+        .id(monthYearText)
+        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+        .gesture(
+            DragGesture(minimumDistance: 24)
+                .onEnded { value in
+                    if value.translation.width < -40 { shiftMonth(1) }
+                    else if value.translation.width > 40 { shiftMonth(-1) }
+                }
+        )
+    }
+
+    private func shiftMonth(_ direction: Int) {
+        withAnimation(.snappy) {
+            if let d = cal.date(byAdding: .month, value: direction, to: selectedDay) {
+                selectedDay = cal.startOfDay(for: d)
+            }
+        }
     }
 
     private func dayCell(_ date: Date) -> some View {
