@@ -62,6 +62,24 @@ struct CalendarHeader: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .contentShape(Rectangle())
+        .id(SettingsStore.key(startOfWeek(selectedDay)))
+        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+        .gesture(
+            DragGesture(minimumDistance: 24)
+                .onEnded { value in
+                    if value.translation.width < -40 { shiftWeek(1) }
+                    else if value.translation.width > 40 { shiftWeek(-1) }
+                }
+        )
+    }
+
+    private func shiftWeek(_ direction: Int) {
+        withAnimation(.snappy) {
+            if let d = cal.date(byAdding: .day, value: 7 * direction, to: selectedDay) {
+                selectedDay = cal.startOfDay(for: d)
+            }
+        }
     }
 
     private var monthGrid: some View {
