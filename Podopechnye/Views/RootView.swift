@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var calendar: CalendarService
+    @EnvironmentObject private var settings: SettingsStore
     @AppStorage("didOnboardCalendar") private var didOnboard = false
     @State private var showOnboarding = false
 
@@ -13,6 +14,7 @@ struct RootView: View {
                 .tabItem { Label("Клиенты", systemImage: "person.2.fill") }
         }
         .tint(.appAccent)
+        .preferredColorScheme(settings.colorScheme)
         .overlay(ToastView())
         .sheet(isPresented: $showOnboarding) {
             CalendarPermissionView { didOnboard = true }

@@ -1,6 +1,8 @@
 import SwiftUI
+import UIKit
 
 // Дизайн-токены из DEV_BRIEF §9. Один акцент + семафор только для остатка.
+// Базовые токены — семантические системные цвета, поэтому тёмная тема адаптируется сама.
 extension Color {
     init(hex: UInt32) {
         self.init(
@@ -13,17 +15,19 @@ extension Color {
     }
 
     // Бренд
-    static let appAccent = Color(hex: 0x5856D6)   // фиолетовый акцент
-    static let appBackground = Color(hex: 0xF2F2F7)
-    static let appCard = Color.white
-    static let appText = Color(hex: 0x1C1C1E)
-    static let appSecondary = Color(hex: 0x8E8E93)
+    static let appAccent = Color(hex: 0x5856D6)   // фиолетовый акцент (один в обеих темах)
 
-    // Семафор остатка (только для сигнала остатка занятий)
+    // Адаптивные поверхности и текст
+    static let appBackground = Color(uiColor: .systemGroupedBackground)
+    static let appCard = Color(uiColor: .secondarySystemGroupedBackground)
+    static let appText = Color(uiColor: .label)
+    static let appSecondary = Color(uiColor: .secondaryLabel)
+
+    // Семафор остатка (только для сигнала остатка занятий — одинаков в обеих темах)
     static let semGreen = Color(hex: 0x34C759)
     static let semYellow = Color(hex: 0xFF9F0A)
     static let semRed = Color(hex: 0xFF3B30)
-    static let semNone = Color(hex: 0xC7C7CC)
+    static let semNone = Color(uiColor: .systemGray3)
 }
 
 // Платформенные значения цвета (для EventKit и т.п., где нужен CGColor).

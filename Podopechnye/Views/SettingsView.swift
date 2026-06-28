@@ -8,6 +8,15 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Оформление") {
+                    Picker("Тема", selection: $settings.appearanceRaw) {
+                        Text("Система").tag(0)
+                        Text("Светлая").tag(1)
+                        Text("Тёмная").tag(2)
+                    }
+                    .pickerStyle(.segmented)
+                }
+
                 Section("Сигнал остатка") {
                     Stepper("Жёлтый при остатке ≤ \(settings.yellowThreshold)",
                             value: $settings.yellowThreshold, in: 1...10)

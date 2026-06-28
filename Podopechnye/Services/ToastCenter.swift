@@ -41,15 +41,15 @@ struct ToastView: View {
                 HStack(spacing: 14) {
                     Text(message)
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(uiColor: .systemBackground))
                     Spacer(minLength: 8)
                     Button("Отменить") { toasts.performUndo() }
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(Color(hex: 0xB7B5FF))
+                        .foregroundStyle(Color(hex: 0x9D9BFF))
                 }
                 .padding(.horizontal, 18)
                 .padding(.vertical, 14)
-                .background(Color(hex: 0x2C2C2E), in: Capsule())
+                .background(Color(uiColor: .label), in: Capsule())
                 .shadow(color: .black.opacity(0.2), radius: 12, y: 6)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 60)
