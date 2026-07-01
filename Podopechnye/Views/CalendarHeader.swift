@@ -7,6 +7,15 @@ struct CalendarHeader: View {
     let lessonDays: Set<String>          // ключи дней с занятиями
     @EnvironmentObject private var settings: SettingsStore
     @State private var expanded = false
+    @State private var slideForward = true
+
+    // Направленный переход: вперёд — новый приезжает справа, назад — слева.
+    private var slideTransition: AnyTransition {
+        .asymmetric(
+            insertion: .move(edge: slideForward ? .trailing : .leading),
+            removal: .move(edge: slideForward ? .leading : .trailing)
+        )
+    }
 
     private let cal = Calendar.current
     private let weekdaySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
@@ -64,7 +73,7 @@ struct CalendarHeader: View {
         }
         .contentShape(Rectangle())
         .id(SettingsStore.key(startOfWeek(selectedDay)))
-        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+        .transition(slideTransition)
         .gesture(
             DragGesture(minimumDistance: 24)
                 .onEnded { value in
@@ -75,6 +84,7 @@ struct CalendarHeader: View {
     }
 
     private func shiftWeek(_ direction: Int) {
+        slideForward = direction > 0
         withAnimation(.snappy) {
             if let d = cal.date(byAdding: .day, value: 7 * direction, to: selectedDay) {
                 selectedDay = cal.startOfDay(for: d)
@@ -95,7 +105,7 @@ struct CalendarHeader: View {
         }
         .contentShape(Rectangle())
         .id(monthYearText)
-        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+        .transition(slideTransition)
         .gesture(
             DragGesture(minimumDistance: 24)
                 .onEnded { value in
@@ -106,6 +116,7 @@ struct CalendarHeader: View {
     }
 
     private func shiftMonth(_ direction: Int) {
+        slideForward = direction > 0
         withAnimation(.snappy) {
             if let d = cal.date(byAdding: .month, value: direction, to: selectedDay) {
                 selectedDay = cal.startOfDay(for: d)
