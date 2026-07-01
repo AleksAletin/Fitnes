@@ -16,7 +16,15 @@ struct PodopechnyeApp: App {
         } catch {
             fatalError("Не удалось создать ModelContainer: \(error)")
         }
-        SampleData.seedIfNeeded(container.mainContext)
+        // Демо-данные в продакшене не засеваем — приложение стартует пустым.
+        // SampleData используется только в SwiftUI-превью (см. PreviewData)
+        // и для скриншотов App Store по debug-флагу запуска (в релиз не входит).
+        #if DEBUG
+        if CommandLine.arguments.contains("-seedDemo") {
+            SampleData.seedIfNeeded(container.mainContext)
+            UserDefaults.standard.set(true, forKey: "didOnboardCalendar")
+        }
+        #endif
     }
 
     var body: some Scene {
