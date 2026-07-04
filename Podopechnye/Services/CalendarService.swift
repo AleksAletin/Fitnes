@@ -11,8 +11,11 @@ final class CalendarService: ObservableObject {
     private let calendarTitle = "Тренировки"
     @Published private(set) var granted = false
 
-    /// Длительность занятия по умолчанию.
-    private let defaultDuration: TimeInterval = 60 * 60
+    /// Длительность занятия — из настроек приложения (по умолчанию 60 минут).
+    private var defaultDuration: TimeInterval {
+        let minutes = UserDefaults.standard.integer(forKey: "lessonDurationMinutes")
+        return TimeInterval((minutes == 0 ? 60 : minutes) * 60)
+    }
 
     private init() {
         refreshAccess()

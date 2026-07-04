@@ -31,6 +31,13 @@ struct SettingsView: View {
                         .font(.footnote).foregroundStyle(Color.appSecondary)
                 }
 
+                Section("Занятие") {
+                    Stepper("Длительность: \(settings.lessonDurationMinutes) мин",
+                            value: $settings.lessonDurationMinutes, in: 30...180, step: 15)
+                    Text("Используется для события в Календаре и проверки пересечений по времени.")
+                        .font(.footnote).foregroundStyle(Color.appSecondary)
+                }
+
                 Section("Пакет по умолчанию") {
                     Stepper("\(settings.defaultPackageCount) занятий",
                             value: $settings.defaultPackageCount, in: 1...30)

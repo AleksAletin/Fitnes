@@ -13,7 +13,6 @@ struct ClientDetailView: View {
     @State private var editingPackage = false
     @State private var addingLesson = false
     @State private var showDeleteConfirm = false
-    @State private var showCallSheet = false
 
     var body: some View {
         ScrollView {
@@ -60,7 +59,8 @@ struct ClientDetailView: View {
         .sheet(isPresented: $addingLesson) {
             LessonFormView(presetClient: client)
         }
-        .confirmationDialog("Удалить клиента?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+        // .alert вместо confirmationDialog — на iOS 26 диалог-поповер всплывает не на месте.
+        .alert("Удалить клиента?", isPresented: $showDeleteConfirm) {
             Button("Удалить", role: .destructive) {
                 // Убираем события клиента из Календаря айфона, иначе они осиротеют.
                 for lesson in client.lessons where lesson.eventId != nil {
@@ -113,14 +113,12 @@ struct ClientDetailView: View {
         if (client.phone?.isEmpty == false) || (client.tg?.isEmpty == false) {
             HStack(spacing: 12) {
                 if let phone = client.phone, !phone.isEmpty {
-                    contactButton(title: "Позвонить", icon: "phone.fill") { showCallSheet = true }
-                        .confirmationDialog("Позвонить", isPresented: $showCallSheet, titleVisibility: .visible) {
-                            Button(phone) {
-                                let digits = phone.filter { $0.isNumber || $0 == "+" }
-                                if let url = URL(string: "tel://\(digits)") { openURL(url) }
-                            }
-                            Button("Отмена", role: .cancel) {}
-                        }
+                    // Звоним сразу: системный диалог набора и так спросит подтверждение,
+                    // а промежуточный поповер на iOS 26 выглядел не на месте.
+                    contactButton(title: "Позвонить", icon: "phone.fill") {
+                        let digits = phone.filter { $0.isNumber || $0 == "+" }
+                        if let url = URL(string: "tel://\(digits)") { openURL(url) }
+                    }
                 }
                 if let tg = client.tg, !tg.isEmpty {
                     contactButton(title: "Телеграм", icon: "paperplane.fill") { openTelegram(tg) }

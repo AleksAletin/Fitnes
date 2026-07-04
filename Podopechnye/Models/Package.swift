@@ -38,7 +38,7 @@ extension Package {
     /// Заголовок пакета для UI, напр. «Пакет 10 занятий» / «Пробное».
     var title: String {
         switch kind {
-        case .package: return "Пакет \(total) занятий"
+        case .package: return total == 0 ? "Занятия в долг" : "Пакет \(total) занятий"
         case .period:  return "Абонемент"
         case .single:  return "Разовое"
         case .trial:   return "Пробное"

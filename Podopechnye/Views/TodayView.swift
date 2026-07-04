@@ -70,17 +70,23 @@ struct TodayView: View {
             .sheet(item: $editingLesson) { ProgramEditorView(lesson: $0) }
             .sheet(item: $transferLesson) { LessonFormView(lessonToEdit: $0) }
             .sheet(isPresented: $showSettings) { SettingsView() }
-            .alert("Пакет закончился", isPresented: emptyAlertBinding, presenting: packageEmptyLesson) { lesson in
+            .alert("Занятие не оплачено", isPresented: emptyAlertBinding, presenting: packageEmptyLesson) { lesson in
                 Button("Провести в долг") { performDone(lesson) }
                 Button("Отмена", role: .cancel) {}
             } message: { _ in
-                Text("У клиента не осталось оплаченных занятий. Провести в долг или сначала оформить новый пакет?")
+                Text("У клиента нет оплаченных занятий. «Провести в долг» — остаток уйдёт в минус и подсветится красным, пока не оформите пакет.")
             }
-            .confirmationDialog(cancelMessage, isPresented: cancelDialogBinding, titleVisibility: .visible, presenting: cancelLesson) { lesson in
+            // .alert вместо confirmationDialog: на iOS 26 диалоги-поповеры
+            // всплывают у верха экрана и выглядят «не на месте».
+            .alert("Отменить занятие?", isPresented: cancelDialogBinding, presenting: cancelLesson) { lesson in
                 let charge = recommendCharge(lesson)
                 Button(charge ? "Отменить со списанием" : "Отменить без списания") { cancel(lesson, charge: charge) }
                 Button(charge ? "Отменить без списания" : "Отменить со списанием") { cancel(lesson, charge: !charge) }
                 Button("Назад", role: .cancel) {}
+            } message: { lesson in
+                Text(recommendCharge(lesson)
+                     ? "До занятия меньше \(settings.lateCancelHours) ч — по правилам занятие списывается. Можно сделать исключение."
+                     : "До занятия больше \(settings.lateCancelHours) ч — списание не требуется.")
             }
         }
     }
@@ -122,7 +128,9 @@ struct TodayView: View {
 
     // MARK: Действия
     private func tapDone(_ lesson: Lesson) {
-        if let pkg = lesson.client?.package, pkg.remaining <= 0 {
+        // Нет пакета или пакет исчерпан → спрашиваем про долг.
+        let remaining = lesson.client?.package?.remaining
+        if remaining == nil || remaining! <= 0 {
             packageEmptyLesson = lesson
         } else {
             performDone(lesson)
@@ -131,10 +139,26 @@ struct TodayView: View {
 
     private func performDone(_ lesson: Lesson) {
         withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) { lesson.status = .done }
+
+        // Без пакета тоже списываем: заводим нулевой пакет-долг, остаток уходит в минус.
+        var createdDebtPackage = false
+        if let client = lesson.client, client.package == nil {
+            let debt = Package(kind: .package, total: 0, used: 0, price: "", date: Date())
+            client.package = debt
+            context.insert(debt)
+            createdDebtPackage = true
+        }
         lesson.client?.package?.used += 1
+
         toasts.show("Занятие проведено") {
             lesson.status = .planned
-            lesson.client?.package?.used -= 1
+            guard let pkg = lesson.client?.package else { return }
+            pkg.used -= 1
+            // Откат авто-созданного пакета-долга, если он снова пуст.
+            if createdDebtPackage && pkg.total == 0 && pkg.used <= 0 {
+                lesson.client?.package = nil
+                context.delete(pkg)
+            }
         }
     }
 
@@ -156,13 +180,6 @@ struct TodayView: View {
 
     private func recommendCharge(_ lesson: Lesson) -> Bool {
         lesson.date.timeIntervalSinceNow / 3600 < Double(settings.lateCancelHours)
-    }
-
-    private var cancelMessage: String {
-        guard let lesson = cancelLesson else { return "Отменить занятие?" }
-        return recommendCharge(lesson)
-            ? "До занятия меньше \(settings.lateCancelHours) ч — по правилам занятие списывается. Можно сделать исключение."
-            : "До занятия больше \(settings.lateCancelHours) ч — списание не требуется."
     }
 
     private var emptyAlertBinding: Binding<Bool> {

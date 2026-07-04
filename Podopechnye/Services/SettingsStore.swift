@@ -7,6 +7,7 @@ final class SettingsStore: ObservableObject {
     @AppStorage("yellowThreshold") var yellowThreshold: Int = 3
     @AppStorage("lateCancelHours") var lateCancelHours: Int = 8
     @AppStorage("defaultPackageCount") var defaultPackageCount: Int = 10
+    @AppStorage("lessonDurationMinutes") var lessonDurationMinutes: Int = 60
     @AppStorage("appearance") var appearanceRaw: Int = 0   // 0 система · 1 светлая · 2 тёмная
     @AppStorage("daysOffData") private var daysOffData: Data = Data()
 

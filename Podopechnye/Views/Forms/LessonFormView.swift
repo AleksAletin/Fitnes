@@ -5,6 +5,7 @@ struct LessonFormView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var toasts: ToastCenter
+    @EnvironmentObject private var settings: SettingsStore
     @Query(sort: \Client.name) private var allClients: [Client]
 
     var presetClient: Client?       // фиксированный клиент (из карточки)
@@ -76,9 +77,12 @@ struct LessonFormView: View {
                 }
             }
             .onAppear(perform: load)
-            .confirmationDialog(conflictMessage, isPresented: $showConflict, titleVisibility: .visible) {
+            // .alert вместо confirmationDialog — на iOS 26 диалог-поповер всплывает не на месте.
+            .alert("Время занято", isPresented: $showConflict) {
                 Button("Записать всё равно") { commit() }
                 Button("Изменить время", role: .cancel) {}
+            } message: {
+                Text(conflictMessage)
             }
         }
     }
@@ -98,18 +102,20 @@ struct LessonFormView: View {
     }
 
     // Конфликты: занятия приложения + личный Календарь (DEV_BRIEF §6.6).
+    // Считаем пересечение интервалов: занятия длятся lessonDurationMinutes (настройка).
     private func findConflicts() -> [String] {
         var result: [String] = []
-        let cal = Calendar.current
+        let duration = TimeInterval(settings.lessonDurationMinutes * 60)
+        let newEnd = date.addingTimeInterval(duration)
         let appConflicts = allClients.flatMap { $0.lessons }.filter { lesson in
             lesson.id != lessonToEdit?.id &&
             lesson.status == .planned &&
-            cal.isDate(lesson.date, equalTo: date, toGranularity: .minute)
+            lesson.date < newEnd && date < lesson.date.addingTimeInterval(duration)
         }
         for l in appConflicts {
-            result.append("Время занято — уже есть занятие с \(l.client?.name ?? "клиентом")")
+            result.append("Время занято — уже есть занятие с \(l.client?.name ?? "клиентом") в \(l.timeText)")
         }
-        for title in CalendarService.shared.conflictTitles(start: date) {
+        for title in CalendarService.shared.conflictTitles(start: date, durationOverride: duration) {
             result.append("Занято в Календаре — «\(title)»")
         }
         return result
