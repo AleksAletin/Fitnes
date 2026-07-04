@@ -53,6 +53,9 @@ struct PackageFormView: View {
 
     private func save() {
         let total: Int = needsCount ? count : 1
+        // Старый пакет удаляем, иначе при каждом продлении в базе копятся сироты.
+        // История оплат сохраняется в Payment — она и есть история пакетов.
+        if let old = client.package { context.delete(old) }
         let package = Package(kind: kind, total: total, used: 0, price: price, date: Date())
         client.package = package
         context.insert(package)

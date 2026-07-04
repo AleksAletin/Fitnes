@@ -62,6 +62,10 @@ struct ClientDetailView: View {
         }
         .confirmationDialog("Удалить клиента?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Удалить", role: .destructive) {
+                // Убираем события клиента из Календаря айфона, иначе они осиротеют.
+                for lesson in client.lessons where lesson.eventId != nil {
+                    CalendarService.shared.remove(eventId: lesson.eventId)
+                }
                 context.delete(client)
                 dismiss()
             }

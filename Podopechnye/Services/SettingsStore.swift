@@ -59,6 +59,10 @@ final class SettingsStore: ObservableObject {
 
     private static func nextSunday() -> Date? {
         let cal = Calendar.current
+        // Если сегодня воскресенье — «ближайшее» это сегодня, а не через неделю.
+        if cal.component(.weekday, from: Date()) == 1 {
+            return cal.startOfDay(for: Date())
+        }
         return cal.nextDate(after: Date(), matching: DateComponents(weekday: 1),
                             matchingPolicy: .nextTime)
     }
