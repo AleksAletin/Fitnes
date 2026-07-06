@@ -6,12 +6,35 @@
 	objectVersion = 71;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		1A0000000000000000000110 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A0000000000000000000005;
+			remoteInfo = Podopechnye;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1A0000000000000000000006 /* Podopechnye.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Podopechnye.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A0000000000000000000106 /* PodopechnyeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PodopechnyeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1A0000000000000000000004 /* Podopechnye */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Podopechnye; sourceTree = "<group>"; };
+		1A0000000000000000000104 /* PodopechnyeTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PodopechnyeTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		1A0000000000000000000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A0000000000000000000108 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -25,6 +48,7 @@
 			isa = PBXGroup;
 			children = (
 				1A0000000000000000000004 /* Podopechnye */,
+				1A0000000000000000000104 /* PodopechnyeTests */,
 				1A0000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -32,6 +56,8 @@
 		1A0000000000000000000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				1A0000000000000000000006 /* Podopechnye.app */,
+				1A0000000000000000000106 /* PodopechnyeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -58,9 +84,40 @@
 			packageProductDependencies = (
 			);
 			productName = Podopechnye;
+			productReference = 1A0000000000000000000006 /* Podopechnye.app */;
 			productType = "com.apple.product-type.application";
 		};
+		1A0000000000000000000105 /* PodopechnyeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A0000000000000000000113 /* Build configuration list for PBXNativeTarget "PodopechnyeTests" */;
+			buildPhases = (
+				1A0000000000000000000107 /* Sources */,
+				1A0000000000000000000108 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A0000000000000000000111 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1A0000000000000000000104 /* PodopechnyeTests */,
+			);
+			name = PodopechnyeTests;
+			packageProductDependencies = (
+			);
+			productName = PodopechnyeTests;
+			productReference = 1A0000000000000000000106 /* PodopechnyeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXTargetDependency section */
+		1A0000000000000000000111 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A0000000000000000000005 /* Podopechnye */;
+			targetProxy = 1A0000000000000000000110 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXProject section */
 		1A0000000000000000000001 /* Project object */ = {
@@ -72,6 +129,10 @@
 				TargetAttributes = {
 					1A0000000000000000000005 = {
 						CreatedOnToolsVersion = 26.6;
+					};
+					1A0000000000000000000105 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 1A0000000000000000000005;
 					};
 				};
 			};
@@ -91,6 +152,7 @@
 			projectRoot = "";
 			targets = (
 				1A0000000000000000000005 /* Podopechnye */,
+				1A0000000000000000000105 /* PodopechnyeTests */,
 			);
 		};
 /* End PBXProject section */
@@ -107,6 +169,13 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		1A0000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A0000000000000000000107 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -303,6 +372,42 @@
 			};
 			name = Release;
 		};
+		1A0000000000000000000114 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aletin.PodopechnyeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Podopechnye.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Podopechnye";
+			};
+			name = Debug;
+		};
+		1A0000000000000000000115 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aletin.PodopechnyeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Podopechnye.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Podopechnye";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -320,6 +425,15 @@
 			buildConfigurations = (
 				1A000000000000000000000E /* Debug */,
 				1A000000000000000000000F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A0000000000000000000113 /* Build configuration list for PBXNativeTarget "PodopechnyeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A0000000000000000000114 /* Debug */,
+				1A0000000000000000000115 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

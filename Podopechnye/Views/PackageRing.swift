@@ -32,14 +32,14 @@ struct PackageRing: View {
                         .font(.system(size: size * 0.32, weight: .bold))
                         .foregroundStyle(Color.semRed)
                     Text("в долг")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.footnote.weight(.semibold))
                         .foregroundStyle(Color.semRed)
                 } else if let package {
                     Text("\(package.remaining)")
                         .font(.system(size: size * 0.34, weight: .bold))
                         .foregroundStyle(Color.appText)
                     Text("из \(package.total)")
-                        .font(.system(size: 13))
+                        .font(.footnote)
                         .foregroundStyle(Color.appSecondary)
                 } else {
                     Text("—")

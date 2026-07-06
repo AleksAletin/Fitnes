@@ -40,7 +40,7 @@ struct CalendarPermissionView: View {
                 .font(.system(size: 64))
                 .foregroundStyle(Color.appAccent)
             Text("Доступ к Календарю")
-                .font(.system(size: 24, weight: .bold))
+                .font(.title2.bold())
             VStack(spacing: 12) {
                 permissionRow(icon: "plus.circle.fill", text: "Занятия автоматически попадают в Календарь айфона — в отдельный календарь «Тренировки».")
                 permissionRow(icon: "exclamationmark.triangle.fill", text: "При записи проверяется, не занято ли время другими событиями.")
@@ -55,14 +55,14 @@ struct CalendarPermissionView: View {
                     }
                 } label: {
                     Text("Разрешить доступ")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.headline)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
                         .background(Color.appAccent, in: RoundedRectangle(cornerRadius: 14))
                 }
                 Button("Позже") { finish() }
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .foregroundStyle(Color.appSecondary)
             }
             .padding(.horizontal, 24)
@@ -74,7 +74,7 @@ struct CalendarPermissionView: View {
     private func permissionRow(icon: String, text: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon).foregroundStyle(Color.appAccent).frame(width: 24)
-            Text(text).font(.system(size: 15)).foregroundStyle(Color.appText)
+            Text(text).font(.subheadline).foregroundStyle(Color.appText)
             Spacer()
         }
     }
@@ -87,8 +87,5 @@ struct CalendarPermissionView: View {
 
 #Preview {
     RootView()
-        .modelContainer(PreviewData.container)
-        .environmentObject(SettingsStore())
-        .environmentObject(ToastCenter())
-        .environmentObject(CalendarService.shared)
+        .previewEnvironment()
 }

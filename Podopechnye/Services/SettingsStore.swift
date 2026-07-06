@@ -1,5 +1,10 @@
 import SwiftUI
 
+// Ключи UserDefaults, которые читаются не только через SettingsStore.
+enum SettingsKeys {
+    static let lessonDurationMinutes = "lessonDurationMinutes"
+}
+
 // Глобальные настройки приложения. Скаляры — в @AppStorage, выходные — как множество
 // конкретных дат «yyyy-MM-dd» (плавающие, привязаны к неделе; DEV_BRIEF §6.7).
 @MainActor
@@ -7,7 +12,7 @@ final class SettingsStore: ObservableObject {
     @AppStorage("yellowThreshold") var yellowThreshold: Int = 3
     @AppStorage("lateCancelHours") var lateCancelHours: Int = 8
     @AppStorage("defaultPackageCount") var defaultPackageCount: Int = 10
-    @AppStorage("lessonDurationMinutes") var lessonDurationMinutes: Int = 60
+    @AppStorage(SettingsKeys.lessonDurationMinutes) var lessonDurationMinutes: Int = 60
     @AppStorage("appearance") var appearanceRaw: Int = 0   // 0 система · 1 светлая · 2 тёмная
     @AppStorage("daysOffData") private var daysOffData: Data = Data()
 
@@ -33,11 +38,16 @@ final class SettingsStore: ObservableObject {
     }
 
     // MARK: Выходные
-    static func key(_ date: Date) -> String {
+    // Кэшированный форматтер: key() зовётся в циклах по всем занятиям.
+    private static let dayKeyFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "ru_RU")
         f.dateFormat = "yyyy-MM-dd"
-        return f.string(from: Calendar.current.startOfDay(for: date))
+        return f
+    }()
+
+    static func key(_ date: Date) -> String {
+        dayKeyFormatter.string(from: Calendar.current.startOfDay(for: date))
     }
 
     func isDayOff(_ date: Date) -> Bool {

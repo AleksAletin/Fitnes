@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 // In-memory контейнер с демо-данными для SwiftUI-превью.
 enum PreviewData {
@@ -12,4 +13,15 @@ enum PreviewData {
         SampleData.seedIfNeeded(ModelContext(container))
         return container
     }()
+}
+
+// Общее окружение для #Preview, чтобы не повторять environmentObject в каждом.
+extension View {
+    func previewEnvironment() -> some View {
+        self
+            .modelContainer(PreviewData.container)
+            .environmentObject(SettingsStore())
+            .environmentObject(ToastCenter())
+            .environmentObject(CalendarService.shared)
+    }
 }

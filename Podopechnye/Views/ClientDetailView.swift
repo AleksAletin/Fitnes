@@ -22,7 +22,7 @@ struct ClientDetailView: View {
                 if let notes = client.notes, !notes.isEmpty {
                     sectionCard("Заметки") {
                         Text(notes)
-                            .font(.system(size: 15))
+                            .font(.subheadline)
                             .foregroundStyle(Color.appText)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -82,20 +82,20 @@ struct ClientDetailView: View {
                 PackageRing(client: client, yellowThreshold: yellowThreshold, size: 110)
                 VStack(alignment: .leading, spacing: 6) {
                     Text(client.package?.title ?? "Без пакета")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.headline)
                     if let p = client.package {
                         Text("оплачено \(p.total) · проведено \(p.used)")
-                            .font(.system(size: 14))
+                            .font(.footnote)
                             .foregroundStyle(Color.appSecondary)
                         if !p.price.isEmpty {
-                            Text(p.price).font(.system(size: 14)).foregroundStyle(Color.appSecondary)
+                            Text(p.price).font(.footnote).foregroundStyle(Color.appSecondary)
                         }
                     }
                     Button {
                         editingPackage = true
                     } label: {
                         Text(client.package == nil ? "Оформить пакет" : "Продлить / новый пакет")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 14).padding(.vertical, 8)
                             .background(Color.appAccent, in: Capsule())
@@ -143,7 +143,7 @@ struct ClientDetailView: View {
     private func contactButton(title: String, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: icon)
-                .font(.system(size: 15, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.appAccent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
@@ -160,14 +160,14 @@ struct ClientDetailView: View {
             VStack(spacing: 10) {
                 if upcoming.isEmpty {
                     Text("Нет запланированных занятий")
-                        .font(.system(size: 14))
+                        .font(.footnote)
                         .foregroundStyle(Color.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     ForEach(upcoming) { lesson in
                         HStack {
                             Text(lesson.date.formatted(.dateTime.day().month().hour().minute()))
-                                .font(.system(size: 15))
+                                .font(.subheadline)
                             Spacer()
                             if let badge = lesson.kind.badge { StatusBadge(text: badge) }
                         }
@@ -175,7 +175,7 @@ struct ClientDetailView: View {
                 }
                 Button { addingLesson = true } label: {
                     Label("Записать занятие", systemImage: "plus")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.appAccent)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -195,10 +195,10 @@ struct ClientDetailView: View {
                     ForEach(past) { lesson in
                         HStack {
                             Text(lesson.date.formatted(.dateTime.day().month()))
-                                .font(.system(size: 14)).foregroundStyle(Color.appSecondary)
+                                .font(.footnote).foregroundStyle(Color.appSecondary)
                             Spacer()
                             Text(historyStatus(lesson))
-                                .font(.system(size: 14))
+                                .font(.footnote)
                                 .foregroundStyle(lesson.status == .done ? Color.semGreen : Color.appSecondary)
                         }
                     }
@@ -206,9 +206,9 @@ struct ClientDetailView: View {
                         Divider().padding(.vertical, 4)
                         ForEach(client.payments.sorted { $0.date > $1.date }) { p in
                             HStack {
-                                Text(p.type).font(.system(size: 14))
+                                Text(p.type).font(.footnote)
                                 Spacer()
-                                Text(p.sum).font(.system(size: 14, weight: .semibold))
+                                Text(p.sum).font(.footnote.weight(.semibold))
                             }
                         }
                     }
@@ -230,7 +230,7 @@ struct ClientDetailView: View {
         VStack(alignment: .leading, spacing: 10) {
             if let title {
                 Text(title.uppercased())
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(Color.appSecondary)
             }
             content()

@@ -37,14 +37,14 @@ struct CalendarHeader: View {
 
     private var titleRow: some View {
         HStack {
-            Text(monthYearText).font(.system(size: 15, weight: .semibold))
+            Text(monthYearText).font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.appSecondary)
             Spacer()
             Button {
                 withAnimation(.snappy) { expanded.toggle() }
             } label: {
                 Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.footnote.weight(.semibold))
                     .foregroundStyle(Color.appAccent)
             }
         }
@@ -53,7 +53,7 @@ struct CalendarHeader: View {
     private var weekdayLabels: some View {
         HStack(spacing: 0) {
             ForEach(weekdaySymbols, id: \.self) { s in
-                Text(s).font(.system(size: 12, weight: .medium))
+                Text(s).font(.caption.weight(.medium))
                     .foregroundStyle(Color.appSecondary)
                     .frame(maxWidth: .infinity)
             }
@@ -65,7 +65,7 @@ struct CalendarHeader: View {
             ForEach(Array(weekDates().enumerated()), id: \.offset) { idx, date in
                 VStack(spacing: 4) {
                     Text(weekdaySymbols[idx])
-                        .font(.system(size: 12)).foregroundStyle(Color.appSecondary)
+                        .font(.caption).foregroundStyle(Color.appSecondary)
                     dayCell(date)
                 }
                 .frame(maxWidth: .infinity)
@@ -135,7 +135,7 @@ struct CalendarHeader: View {
         } label: {
             VStack(spacing: 2) {
                 Text("\(cal.component(.day, from: date))")
-                    .font(.system(size: 16, weight: isSelected ? .bold : .regular))
+                    .font(.callout.weight(isSelected ? .bold : .regular))
                     .foregroundStyle(textColor(isSelected: isSelected, isToday: isToday, isOff: isOff))
                     .frame(width: 34, height: 34)
                     .background {
@@ -160,14 +160,14 @@ struct CalendarHeader: View {
     // Переключатели выходных для текущей недели.
     private var dayOffToggles: some View {
         HStack(spacing: 6) {
-            Image(systemName: "moon.zzz.fill").font(.system(size: 11)).foregroundStyle(Color.appSecondary)
-            Text("Выходные:").font(.system(size: 12)).foregroundStyle(Color.appSecondary)
+            Image(systemName: "moon.zzz.fill").font(.caption2).foregroundStyle(Color.appSecondary)
+            Text("Выходные:").font(.caption).foregroundStyle(Color.appSecondary)
             ForEach(Array(weekDates().enumerated()), id: \.offset) { idx, date in
                 Button {
                     settings.toggleDayOff(date)
                 } label: {
                     Text(weekdaySymbols[idx])
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(settings.isDayOff(date) ? .white : Color.appSecondary)
                         .frame(width: 26, height: 22)
                         .background(settings.isDayOff(date) ? Color.appAccent : Color.appBackground,

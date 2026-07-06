@@ -56,7 +56,7 @@ struct TodayView: View {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     if isDayOff {
                         Text("Выходной")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.footnote.weight(.semibold))
                             .foregroundStyle(Color.appAccent)
                             .padding(.horizontal, 10).padding(.vertical, 4)
                             .background(Color.appAccent.opacity(0.12), in: Capsule())
@@ -138,48 +138,23 @@ struct TodayView: View {
     }
 
     private func performDone(_ lesson: Lesson) {
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) { lesson.status = .done }
-
-        // Без пакета тоже списываем: заводим нулевой пакет-долг, остаток уходит в минус.
-        var createdDebtPackage = false
-        if let client = lesson.client, client.package == nil {
-            let debt = Package(kind: .package, total: 0, used: 0, price: "", date: Date())
-            client.package = debt
-            context.insert(debt)
-            createdDebtPackage = true
+        var undo: (() -> Void)!
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+            undo = LessonActions.markDone(lesson, context: context)
         }
-        lesson.client?.package?.used += 1
-
-        toasts.show("Занятие проведено") {
-            lesson.status = .planned
-            guard let pkg = lesson.client?.package else { return }
-            pkg.used -= 1
-            // Откат авто-созданного пакета-долга, если он снова пуст.
-            if createdDebtPackage && pkg.total == 0 && pkg.used <= 0 {
-                lesson.client?.package = nil
-                context.delete(pkg)
-            }
-        }
+        toasts.show("Занятие проведено", undo: undo)
     }
 
     private func cancel(_ lesson: Lesson, charge: Bool) {
-        let name = lesson.client?.name ?? ""
-        let date = lesson.date
-        withAnimation { lesson.status = .cancelled }
-        lesson.charged = charge
-        if charge { lesson.client?.package?.used += 1 }
-        CalendarService.shared.remove(eventId: lesson.eventId)
-        lesson.eventId = nil
-        toasts.show(charge ? "Отменено · списано" : "Отменено") {
-            lesson.status = .planned
-            if charge { lesson.client?.package?.used -= 1 }
-            lesson.charged = false
-            lesson.eventId = CalendarService.shared.upsert(title: "Тренировка · \(name)", start: date, existingEventId: nil)
+        var undo: (() -> Void)!
+        withAnimation {
+            undo = LessonActions.cancel(lesson, charge: charge)
         }
+        toasts.show(charge ? "Отменено · списано" : "Отменено", undo: undo)
     }
 
     private func recommendCharge(_ lesson: Lesson) -> Bool {
-        lesson.date.timeIntervalSinceNow / 3600 < Double(settings.lateCancelHours)
+        LessonActions.recommendCharge(lesson, lateCancelHours: settings.lateCancelHours)
     }
 
     private var emptyAlertBinding: Binding<Bool> {
@@ -199,27 +174,28 @@ struct LessonRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
             Text(lesson.timeText)
-                .font(.system(size: 17, weight: .semibold))
+                .font(.headline)
                 .foregroundStyle(Color.appText).monospacedDigit()
                 .frame(width: 56, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(client?.name ?? "—")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.headline)
                         .foregroundStyle(lesson.status == .done ? Color.appSecondary : Color.appText)
                         .strikethrough(lesson.status == .cancelled)
                     if let badge = lesson.kind.badge { StatusBadge(text: badge) }
                 }
                 HStack(spacing: 6) {
                     SemaphoreDot(state: client?.semaphore(yellowThreshold: yellowThreshold) ?? .none)
-                    Text(remainingText).font(.system(size: 15)).foregroundStyle(Color.appSecondary)
+                    Text(client?.remainingText ?? "Без пакета")
+                        .font(.subheadline).foregroundStyle(Color.appSecondary)
                 }
                 if lesson.hasProgram {
-                    Text(programPreview).font(.system(size: 14)).foregroundStyle(Color.appAccent).lineLimit(2)
+                    Text(programPreview).font(.footnote).foregroundStyle(Color.appAccent).lineLimit(2)
                 }
                 if let note = lesson.note, !note.isEmpty {
-                    Text(note).font(.system(size: 14)).foregroundStyle(Color.appSecondary).lineLimit(2)
+                    Text(note).font(.footnote).foregroundStyle(Color.appSecondary).lineLimit(2)
                 }
             }
             Spacer()
@@ -232,14 +208,6 @@ struct LessonRow: View {
         .opacity(lesson.status == .planned ? 1 : 0.55)
     }
 
-    private var remainingText: String {
-        guard let client else { return "Без пакета" }
-        if client.debt > 0 { return "долг \(client.debt)" }
-        guard let package = client.package else { return "Без пакета" }
-        if package.remaining <= 0 { return "Пакет закончился" }
-        return "осталось \(package.remaining) из \(package.total)"
-    }
-
     private var programPreview: String {
         lesson.program
             .map { [$0.ex, $0.weight].filter { !$0.isEmpty }.joined(separator: " ") }
@@ -249,8 +217,5 @@ struct LessonRow: View {
 
 #Preview {
     TodayView()
-        .modelContainer(PreviewData.container)
-        .environmentObject(SettingsStore())
-        .environmentObject(ToastCenter())
-        .environmentObject(CalendarService.shared)
+        .previewEnvironment()
 }

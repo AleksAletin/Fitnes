@@ -36,6 +36,14 @@ final class Lesson {
 }
 
 extension Lesson {
+    // DateFormatter дорогой — кэшируем, timeText дёргается на каждую строку списка.
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ru_RU")
+        f.dateFormat = "HH:mm"
+        return f
+    }()
+
     var kind: LessonKind {
         get { LessonKind(rawValue: kindRaw) ?? .package }
         set { kindRaw = newValue.rawValue }
@@ -47,12 +55,7 @@ extension Lesson {
     }
 
     /// «HH:MM» для отображения в расписании.
-    var timeText: String {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "ru_RU")
-        f.dateFormat = "HH:mm"
-        return f.string(from: date)
-    }
+    var timeText: String { Self.timeFormatter.string(from: date) }
 
     var hasProgram: Bool { !program.isEmpty }
 }

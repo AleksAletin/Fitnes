@@ -69,6 +69,15 @@ extension Client {
         SemaphoreState.from(remaining: remaining, yellowThreshold: yellowThreshold)
     }
 
+    /// Единый текст остатка для списков: «долг N» / «осталось X из Y» /
+    /// «Пакет закончился» / «Без пакета». Один источник — правится в одном месте.
+    var remainingText: String {
+        if debt > 0 { return "долг \(debt)" }
+        guard let package else { return "Без пакета" }
+        if package.remaining <= 0 { return "Пакет закончился" }
+        return "осталось \(package.remaining) из \(package.total)"
+    }
+
     var initials: String {
         let parts = name.split(separator: " ").prefix(2)
         return parts.compactMap { $0.first.map(String.init) }.joined().uppercased()

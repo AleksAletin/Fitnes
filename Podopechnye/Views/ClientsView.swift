@@ -53,7 +53,7 @@ struct ClientsView: View {
                             } label: {
                                 Label(sortByRemaining ? "по остатку" : "по имени",
                                       systemImage: "arrow.up.arrow.down")
-                                    .font(.system(size: 14))
+                                    .font(.footnote)
                             }
                         }
                         .listRowSeparator(.hidden)
@@ -112,12 +112,12 @@ struct ClientRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(client.name)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.headline)
                         .foregroundStyle(Color.appText)
                     if client.status == .trial { StatusBadge(text: "Пробный") }
                 }
                 Text(client.package?.title ?? "Без пакета")
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundStyle(Color.appSecondary)
             }
 
@@ -131,12 +131,12 @@ struct ClientRow: View {
     @ViewBuilder
     private var remainingLabel: some View {
         if client.debt > 0 {
-            Text("долг \(client.debt)")
-                .font(.system(size: 15, weight: .semibold))
+            Text(client.remainingText)
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.semRed)
         } else if let package = client.package {
             Text("\(package.remaining) / \(package.total)")
-                .font(.system(size: 17, weight: .semibold))
+                .font(.headline)
                 .foregroundStyle(client.semaphore(yellowThreshold: yellowThreshold).color)
                 .monospacedDigit()
         }
@@ -145,8 +145,5 @@ struct ClientRow: View {
 
 #Preview {
     ClientsView()
-        .modelContainer(PreviewData.container)
-        .environmentObject(SettingsStore())
-        .environmentObject(ToastCenter())
-        .environmentObject(CalendarService.shared)
+        .previewEnvironment()
 }

@@ -49,13 +49,13 @@ struct ProgramEditorView: View {
             ForEach($exercises) { $ex in
                 VStack(spacing: 8) {
                     TextField("Упражнение", text: $ex.ex)
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.callout.weight(.medium))
                     HStack {
                         TextField("Вес, кг", text: $ex.weight).keyboardType(.numbersAndPunctuation)
                         Divider()
                         TextField("Схема, напр. 4×12", text: $ex.scheme)
                     }
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundStyle(Color.appSecondary)
                 }
                 .padding(.vertical, 4)

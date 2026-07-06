@@ -40,11 +40,11 @@ struct ToastView: View {
             if let message = toasts.message {
                 HStack(spacing: 14) {
                     Text(message)
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.subheadline.weight(.medium))
                         .foregroundStyle(Color(uiColor: .systemBackground))
                     Spacer(minLength: 8)
                     Button("Отменить") { toasts.performUndo() }
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color(hex: 0x9D9BFF))
                 }
                 .padding(.horizontal, 18)
