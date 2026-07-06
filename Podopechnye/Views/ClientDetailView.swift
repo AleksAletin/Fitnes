@@ -128,7 +128,11 @@ struct ClientDetailView: View {
     }
 
     private func openTelegram(_ tg: String) {
-        let user = tg.hasPrefix("@") ? String(tg.dropFirst()) : tg
+        // Оставляем только допустимые символы username — чтобы в диплинк
+        // нельзя было дописать лишние параметры.
+        let raw = tg.hasPrefix("@") ? String(tg.dropFirst()) : tg
+        let user = raw.filter { $0.isLetter || $0.isNumber || $0 == "_" }
+        guard !user.isEmpty else { return }
         if let deeplink = URL(string: "tg://resolve?domain=\(user)") {
             openURL(deeplink) { accepted in
                 if !accepted, let web = URL(string: "https://t.me/\(user)") { openURL(web) }
